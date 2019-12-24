@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>唐诗四万三千首</title>
+</head>
+<script src="/static/jquery.min.js"></script>
+<body>
+<from>
+    <center> <input type="text" id ="name">  <div id ="count"></div></center>
+</from>
+<div id = "result">
+</div>
+</body>
+<script type="text/javascript">
+
+    $(function () {
+        $('#name').bind('input propertychange', function() {
+
+            $("#count").html("")
+
+            var name= this.value;
+            if(name== ''){
+                $("#result").html("");
+                return;
+            }
+
+            $("#result").html("");
+
+            $.ajax({
+                type: "GET",
+                url: "/tang/search/"+name,
+                success: function (data) {
+                      var d= data.data
+                    re = new RegExp(name,"g"); //定义正则表达式
+                    for(var i in d) {
+                        var t= d[i].title.replace(re,"<font color=\"red\">"+name+"</font>");
+                        var c= d[i].content.replace(re,"<font color=\"red\">"+name+"</font>");
+                        var n= d[i].name.replace(re,"<font color=\"red\">"+name+"</font>");
+
+                        $("#result").append('<p> <center>'+t+'</center>' +'<center><b>'+n+'</b></center>'+
+                            ' <br>'+c+'</p>' + '<hr style="height:3px;border:none;border-top:3px double red;" />')
+                    }
+
+                    $("#count").html("共搜索到"+d.length+"条")
+
+                }})
+        })
+    });
+
+</script>
+</html>
